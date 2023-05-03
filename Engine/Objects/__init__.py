@@ -1,1 +1,0 @@
-from . import Base as Base_object

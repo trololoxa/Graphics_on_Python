@@ -1,6 +1,7 @@
 from Engine.Basic.Mesh import Mesh
-from Engine.Physics.Collider import Collider
 from Engine.Basic.Transform import Transform
+from Engine.Physics.Collider import Collider
+
 
 class Base:
     """

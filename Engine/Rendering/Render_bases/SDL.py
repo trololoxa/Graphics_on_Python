@@ -1,7 +1,10 @@
+import ctypes
+
 import sdl2
 from sdl2 import video
+
 from Engine.Rendering.Rendering_API.OpenGLAPI import OpenGLRender
-import ctypes
+from OpenGL.GL import glViewport, glClear, glClearColor, GL_COLOR_BUFFER_BIT
 
 
 class SDLBase:
@@ -16,21 +19,21 @@ class SDLBase:
         self.window = None
         self.context = None
 
-    def prepare(self):
+    @staticmethod
+    def prepare():
         if sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO) != 0:
             print(sdl2.SDL_GetError())
             return -1
 
-        if True:
-            # Force OpenGL 4.6 'core' context.
-            # Must set *before* creating GL context!
-            video.SDL_GL_SetAttribute(video.SDL_GL_CONTEXT_MAJOR_VERSION, 4)
-            video.SDL_GL_SetAttribute(video.SDL_GL_CONTEXT_MINOR_VERSION, 6)
-            video.SDL_GL_SetAttribute(video.SDL_GL_CONTEXT_PROFILE_MASK,
-                                      video.SDL_GL_CONTEXT_PROFILE_CORE)
+        # Force OpenGL 4.6 'core' context.
+        # Must set *before* creating GL context!
+        video.SDL_GL_SetAttribute(video.SDL_GL_CONTEXT_MAJOR_VERSION, 4)
+        video.SDL_GL_SetAttribute(video.SDL_GL_CONTEXT_MINOR_VERSION, 6)
+        video.SDL_GL_SetAttribute(video.SDL_GL_CONTEXT_PROFILE_MASK,
+                                  video.SDL_GL_CONTEXT_PROFILE_CORE)
 
-    def create_window(self, width=800, height=600):
-        self.window = sdl2.SDL_CreateWindow(b"OpenGL demo",
+    def create_window(self, width=800, height=600, name="OpenGL demo"):
+        self.window = sdl2.SDL_CreateWindow(name.encode("UTF-8"),
                                             sdl2.SDL_WINDOWPOS_UNDEFINED,
                                             sdl2.SDL_WINDOWPOS_UNDEFINED, width, height,
                                             sdl2.SDL_WINDOW_OPENGL | sdl2.SDL_WINDOW_RESIZABLE)
@@ -40,6 +43,8 @@ class SDLBase:
 
         self.context = sdl2.SDL_GL_CreateContext(self.window)
 
+        glViewport(0, 0, width, height)
+
     def infinite_loop(self, shader_controller):
         event = sdl2.SDL_Event()
         running = True
@@ -47,6 +52,9 @@ class SDLBase:
             while sdl2.SDL_PollEvent(ctypes.byref(event)) != 0:
                 if event.type == sdl2.SDL_QUIT:
                     running = False
+
+            glClearColor(0.2, 0.3, 0.3, 1.0)
+            glClear(GL_COLOR_BUFFER_BIT)
 
             self.render_api.render(self.create_mesh_objects_array(shader_controller))
 

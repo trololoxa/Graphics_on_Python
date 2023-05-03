@@ -1,6 +1,7 @@
+# import ctypes
+
 from OpenGL import GL
-import ctypes
-from numpy import array
+from numpy import array, float32
 
 
 class Mesh:
@@ -14,13 +15,14 @@ class Mesh:
         self._vertices = []
         self._triangles = []
         self._applied_vertices = []
-        self._num_triangles = 0
+        self._num_points = 0
+        self.primitive_type = GL.GL_TRIANGLES
         self.VAO = None
         self.VBO = None
 
     @property
-    def num_triangles(self):
-        return self._num_triangles
+    def num_points(self):
+        return self._num_points
 
     @property
     def vertices(self):
@@ -39,10 +41,10 @@ class Mesh:
         if len(self._vertices) != len(self._triangles) and triangles is not None:
             raise Exception("vertices len != triangles len")
 
-        if self._triangles is not None:
-            self._applied_vertices = array([self._vertices[index] for index in self._triangles])
+        if triangles is not None:
+            self._applied_vertices = array([self._vertices[index] for index in self._triangles], dtype=float32)
         else:
-            self._applied_vertices = array(self._vertices)
+            self._applied_vertices = array(self._vertices, dtype=float32)
 
         self.init_arrays()
 
@@ -53,20 +55,23 @@ class Mesh:
         # Need VBO for triangle vertices and colours
         self.VBO = GL.glGenBuffers(1)
         GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self.VBO)
-        GL.glBufferData(GL.GL_ARRAY_BUFFER, self.vertices.nbytes, self.vertices,
+        GL.glBufferData(GL.GL_ARRAY_BUFFER, self._applied_vertices.nbytes, self._applied_vertices,
                         GL.GL_STATIC_DRAW)
 
         # enable array and set up data
         GL.glEnableVertexAttribArray(0)
-        GL.glEnableVertexAttribArray(1)
-        GL.glVertexAttribPointer(0, 4, GL.GL_FLOAT, GL.GL_FALSE, 0,
+        # GL.glEnableVertexAttribArray(1)
+        GL.glVertexAttribPointer(0, 3, GL.GL_FLOAT, GL.GL_FALSE, 0,
                                  None)
         # the last parameter is a pointer
-        GL.glVertexAttribPointer(1, 4, GL.GL_FLOAT, GL.GL_FALSE, 0,
-                                 ctypes.c_void_p(48))
+        # GL.glVertexAttribPointer(1, 3, GL.GL_FLOAT, GL.GL_FALSE, 0,
+        #                          ctypes.c_void_p(48))
 
         GL.glBindBuffer(GL.GL_ARRAY_BUFFER, 0)
         GL.glBindVertexArray(0)
 
-    def set_num_triangles(self, num):
-        self._num_triangles = num
+    def set_num_points(self, num):
+        self._num_points = num
+
+    def set_primitive_type(self, primitive):
+        self.primitive_type = primitive

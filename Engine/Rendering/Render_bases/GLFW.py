@@ -1,5 +1,11 @@
 import glfw
 
+from glfw.GLFW import glfwWindowHint, GLFW_CONTEXT_VERSION_MAJOR, GLFW_CONTEXT_VERSION_MINOR, GLFW_OPENGL_PROFILE, \
+                      GLFW_OPENGL_CORE_PROFILE, GLFW_OPENGL_FORWARD_COMPAT
+from OpenGL.GL import glViewport, glClear, glClearColor, GL_COLOR_BUFFER_BIT
+
+from Engine.Rendering.Rendering_API.OpenGLAPI import OpenGLRender
+
 
 class GLFWBase:
     """
@@ -8,31 +14,60 @@ class GLFWBase:
     objects list can be changed with scene
     """
     def __init__(self):
-        self.render_api = None
-        self.objects = None
+        self.render_api = OpenGLRender()
+        self.objects = []
+        self.window = None
+        self.context = None
 
+    @staticmethod
+    def prepare():
+        # Initialize the library
+        if not glfw.init():
+            return
 
-def main():
-    # Initialize the library
-    if not glfw.init():
-        return
-    # Create a windowed mode window and its OpenGL context
-    window = glfw.create_window(640, 480, "Hello World", None, None)
-    if not window:
+        # Force OpenGL 4.6 'core' context.
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4)
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6)
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, True)
+
+    def create_window(self, width=800, height=600, name="OpenGL demo"):
+        # Create a windowed mode window and its OpenGL context
+        self.window = glfw.create_window(width, height, name, None, None)
+        if not self.window:
+            glfw.terminate()
+            return
+
+        # Make the window's context current
+        glfw.make_context_current(self.window)
+
+        glViewport(0, 0, width, height)
+
+        glfw.set_framebuffer_size_callback(self.window, self._framebuffer_size_callback)
+
+    @staticmethod
+    def _framebuffer_size_callback(window, width, height):
+        glViewport(0, 0, width, height)
+
+    def infinite_loop(self, shader_controller):
+        while not glfw.window_should_close(self.window):
+            glClearColor(0.2, 0.3, 0.3, 1.0)
+            glClear(GL_COLOR_BUFFER_BIT)
+
+            self.render_api.render(self.create_mesh_objects_array(shader_controller))
+
+            glfw.swap_buffers(self.window)
+            glfw.poll_events()
+
         glfw.terminate()
-        return
 
-    # Make the window's context current
-    glfw.make_context_current(window)
+    def create_mesh_objects_array(self, shader_controller):
+        return_array = {}
+        for obj in self.objects:
+            program = shader_controller.shaders[shader_controller.directories[obj.shader_id]]
+            if program not in return_array:
+                return_array[program] = [obj.mesh]
+            else:
+                return_array[program] += [obj.mesh]
 
-    # Loop until the user closes the window
-    while not glfw.window_should_close(window):
-        # Render here, e.g. using pyOpenGL
-
-        # Swap front and back buffers
-        glfw.swap_buffers(window)
-
-        # Poll for and process events
-        glfw.poll_events()
-
-    glfw.terminate()
+        return return_array

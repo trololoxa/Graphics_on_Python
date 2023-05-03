@@ -1,25 +1,19 @@
-import sys
-import ctypes
-import numpy
-
-from OpenGL import GL, GLU
-from OpenGL.GL import shaders
-from OpenGL.arrays import vbo
-
-import sdl2
-from sdl2 import video
-from numpy import array
+from OpenGL import GL
 
 
 class OpenGLRender:
     """Renders any given object using opengl"""
-    def render(self, shader_mesh_array):
+    @staticmethod
+    def render(shader_mesh_array):
         for key in shader_mesh_array:
             GL.glUseProgram(key)
             for mesh in shader_mesh_array[key]:
+                if mesh.VAO is None:
+                    continue
+
                 GL.glBindVertexArray(mesh.VAO)
 
-                GL.glDrawArrays(GL.GL_TRIANGLES, 0, mesh.num_triangles)
+                GL.glDrawArrays(mesh.primitive_type, 0, mesh.num_points)
 
                 GL.glBindVertexArray(0)
             GL.glUseProgram(0)

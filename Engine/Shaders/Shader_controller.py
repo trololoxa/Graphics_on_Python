@@ -1,5 +1,6 @@
-from OpenGL.GL import shaders, GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, glDeleteShader
 import os
+
+from OpenGL.GL import shaders, GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, glDeleteShader
 
 
 class ShaderController:

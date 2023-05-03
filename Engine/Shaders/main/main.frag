@@ -1,9 +1,9 @@
 #version 460
 
-smooth in vec4 theColour;
+smooth in vec3 theColour;
 out vec4 outputColour;
 
 void main()
 {
-    outputColour = theColour;
+    outputColour = vec4(theColour.x, theColour.y, theColour.z, 1.0);
 }
