@@ -13,7 +13,7 @@ class OpenGLRender:
 
                 GL.glBindVertexArray(mesh.VAO)
 
-                GL.glDrawArrays(mesh.primitive_type, 0, mesh.num_points)
+                GL.glDrawElements(mesh.primitive_type, mesh.num_points, GL.GL_UNSIGNED_INT, None)
 
-                GL.glBindVertexArray(0)
+                # GL.glBindVertexArray(0)
             GL.glUseProgram(0)

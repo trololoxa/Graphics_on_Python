@@ -1,10 +1,13 @@
 import glfw
+import numpy
 
 from glfw.GLFW import glfwWindowHint, GLFW_CONTEXT_VERSION_MAJOR, GLFW_CONTEXT_VERSION_MINOR, GLFW_OPENGL_PROFILE, \
                       GLFW_OPENGL_CORE_PROFILE, GLFW_OPENGL_FORWARD_COMPAT
 from OpenGL.GL import glViewport, glClear, glClearColor, GL_COLOR_BUFFER_BIT
 
 from Engine.Rendering.Rendering_API.OpenGLAPI import OpenGLRender
+
+import time
 
 
 class GLFWBase:
@@ -18,6 +21,7 @@ class GLFWBase:
         self.objects = []
         self.window = None
         self.context = None
+        self.fps = 0
 
     @staticmethod
     def prepare():
@@ -50,6 +54,7 @@ class GLFWBase:
         glViewport(0, 0, width, height)
 
     def infinite_loop(self, shader_controller):
+        start_time = time.time_ns()
         while not glfw.window_should_close(self.window):
             glClearColor(0.2, 0.3, 0.3, 1.0)
             glClear(GL_COLOR_BUFFER_BIT)
@@ -58,6 +63,18 @@ class GLFWBase:
 
             glfw.swap_buffers(self.window)
             glfw.poll_events()
+
+            end_time = time.time_ns()
+            elapsed_time = end_time-start_time
+
+            if elapsed_time > 0:
+                self.fps = (1/elapsed_time) * 1000000000
+                print(self.fps)
+            else:
+                self.fps = numpy.inf
+                print('too much fps')
+
+            start_time = end_time
 
         glfw.terminate()
 
