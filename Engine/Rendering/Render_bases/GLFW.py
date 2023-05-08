@@ -3,11 +3,12 @@ import numpy
 
 from glfw.GLFW import glfwWindowHint, GLFW_CONTEXT_VERSION_MAJOR, GLFW_CONTEXT_VERSION_MINOR, GLFW_OPENGL_PROFILE, \
                       GLFW_OPENGL_CORE_PROFILE, GLFW_OPENGL_FORWARD_COMPAT
-from OpenGL.GL import glViewport, glClear, glClearColor, GL_COLOR_BUFFER_BIT
 
 from Engine.Rendering.Rendering_API.OpenGLAPI import OpenGLRender
 
 import time
+
+from Engine.Logger import Logger
 
 
 class GLFWBase:
@@ -35,47 +36,69 @@ class GLFWBase:
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, True)
 
+        Logger().log("Using GLFW Render Base", "Renderer")
+
     def create_window(self, width=800, height=600, name="OpenGL demo"):
-        # Create a windowed mode window and its OpenGL context
+        # Create a windowed mode window and set callbacks
         self.window = glfw.create_window(width, height, name, None, None)
         if not self.window:
-            glfw.terminate()
+            Logger().log("Failed to create GLFW window", "Renderer", "Critical")
+            self.terminate()
             return
 
         # Make the window's context current
         glfw.make_context_current(self.window)
 
-        glViewport(0, 0, width, height)
+        self.render_api.set_viewport(None, width, height)
 
-        glfw.set_framebuffer_size_callback(self.window, self._framebuffer_size_callback)
+        # set callbacks
+        glfw.set_framebuffer_size_callback(self.window, self.render_api.set_viewport)
 
-    @staticmethod
-    def _framebuffer_size_callback(window, width, height):
-        glViewport(0, 0, width, height)
+        Logger().log("Created GLFW window", "Renderer")
+
+    def process_input(self, window):
+        if glfw.get_key(window, glfw.KEY_ESCAPE) == glfw.PRESS:
+            glfw.set_window_should_close(window, True)
+        if glfw.get_key(window, glfw.KEY_SPACE) == glfw.PRESS:
+            self.render_api.set_wireframe_mode(True)
+        elif glfw.get_key(window, glfw.KEY_SPACE) == glfw.RELEASE:
+            self.render_api.set_wireframe_mode(False)
 
     def infinite_loop(self, shader_controller):
+        while not self.should_close():
+            self.step(shader_controller)
+
+        self.terminate()
+
+    def step(self, shader_controller):
         start_time = time.time_ns()
-        while not glfw.window_should_close(self.window):
-            glClearColor(0.2, 0.3, 0.3, 1.0)
-            glClear(GL_COLOR_BUFFER_BIT)
 
-            self.render_api.render(self.create_mesh_objects_array(shader_controller))
+        self.process_input(window=self.window)
 
-            glfw.swap_buffers(self.window)
-            glfw.poll_events()
+        self.render_api.clear_background()
 
-            end_time = time.time_ns()
-            elapsed_time = end_time-start_time
+        # render
+        self.render_api.render(self.create_mesh_objects_array(shader_controller))
 
-            if elapsed_time > 0:
-                self.fps = (1/elapsed_time) * 1000000000
-                print(self.fps)
-            else:
-                self.fps = numpy.inf
-                print('too much fps')
+        glfw.swap_buffers(self.window)
+        glfw.poll_events()
 
-            start_time = end_time
+        end_time = time.time_ns()
+        elapsed_time = end_time - start_time
 
+        # get program fps
+        if elapsed_time > 0:
+            self.fps = (1 / elapsed_time) * 1000000000
+            # print(self.fps)
+        else:
+            self.fps = numpy.inf
+            # print('too much fps')
+
+    def should_close(self):
+        return glfw.window_should_close(self.window)
+
+    @staticmethod
+    def terminate():
         glfw.terminate()
 
     def create_mesh_objects_array(self, shader_controller):

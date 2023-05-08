@@ -1,4 +1,4 @@
-# import ctypes
+import ctypes
 
 from OpenGL import GL
 from numpy import array, float32, uint32
@@ -38,7 +38,7 @@ class Mesh:
         if triangles is not None:
             self._triangles = array(triangles, dtype=uint32)
         else:
-            self._triangles = array(range(len(self._vertices)), dtype=uint32)
+            self._triangles = array(range(round(len(self._vertices) / 3 / 2)), dtype=uint32)
 
         self._num_points = len(self._triangles)
 
@@ -59,13 +59,15 @@ class Mesh:
         GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, self._triangles.nbytes, self._triangles,
                         GL.GL_STATIC_DRAW)
 
-        # GL.glEnableVertexAttribArray(1)
-        GL.glVertexAttribPointer(0, 3, GL.GL_FLOAT, GL.GL_FALSE, 0,
-                                 None)
+        # vertices
+        GL.glVertexAttribPointer(0, 3, GL.GL_FLOAT, GL.GL_FALSE, 24,
+                                 ctypes.c_void_p(0))
         GL.glEnableVertexAttribArray(0)
-        # the last parameter is a pointer
-        # GL.glVertexAttribPointer(1, 3, GL.GL_FLOAT, GL.GL_FALSE, 0,
-        #                          ctypes.c_void_p(48))
+
+        # colors
+        GL.glVertexAttribPointer(1, 3, GL.GL_FLOAT, GL.GL_FALSE, 24,
+                                 ctypes.c_void_p(12))
+        GL.glEnableVertexAttribArray(1)
 
         GL.glBindBuffer(GL.GL_ARRAY_BUFFER, 0)
         GL.glBindVertexArray(0)

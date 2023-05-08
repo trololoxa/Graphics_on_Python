@@ -5,22 +5,27 @@ from Engine.Objects.Base import Base as Base_object
 # currently I don't want sdl
 from Engine.Rendering.Render_bases.GLFW import GLFWBase
 from Engine.Shaders.Shader_controller import ShaderController
+from Engine.Logger import Logger
 
 
 class Main:
     def __init__(self):
+        self.logger = Logger()
+        self.logger.create_file()
+        # render base, can be changed do SDL
         self.render_base = GLFWBase()
         self.shader_controller = ShaderController()
-        self.wireframe_mode = False
+        # set this before initialize
 
     def initialize(self):
+        """
+        initializes render api, base, shaders and window
+        """
         self.render_base.prepare()
-        self.shader_controller.get_shaders()
         self.render_base.create_window(800, 600)
+        self.shader_controller.get_shaders_dict()
+        self.shader_controller.get_shaders_files()
         self.shader_controller.compile_shaders()
-        if self.wireframe_mode:
-            from OpenGL.GL import glPolygonMode, GL_FRONT_AND_BACK, GL_LINE
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
     def add_object(self, obj=None, triangles=None, vertices=None, primitive=GL_TRIANGLES):
         if obj is not None:
@@ -32,5 +37,11 @@ class Main:
             self.render_base.objects += [obj]
 
     def start(self):
-        # TODO: step func
-        self.render_base.infinite_loop(self.shader_controller)
+        Logger().log("Started render loop", "Main")
+
+        while not self.render_base.should_close():
+            self.render_base.step(self.shader_controller)
+
+        self.render_base.terminate()
+
+        Logger().log("Render loop exited", "Main")

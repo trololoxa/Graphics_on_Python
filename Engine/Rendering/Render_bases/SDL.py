@@ -6,6 +6,8 @@ from sdl2 import video
 from Engine.Rendering.Rendering_API.OpenGLAPI import OpenGLRender
 from OpenGL.GL import glViewport, glClear, glClearColor, GL_COLOR_BUFFER_BIT
 
+from Engine.Logger import Logger
+
 
 class SDLBase:
     """
@@ -31,6 +33,8 @@ class SDLBase:
         video.SDL_GL_SetAttribute(video.SDL_GL_CONTEXT_MINOR_VERSION, 6)
         video.SDL_GL_SetAttribute(video.SDL_GL_CONTEXT_PROFILE_MASK,
                                   video.SDL_GL_CONTEXT_PROFILE_CORE)
+
+        Logger().log("Using GLFW Render Base", "Renderer")
 
     def create_window(self, width=800, height=600, name="OpenGL demo"):
         self.window = sdl2.SDL_CreateWindow(name.encode("UTF-8"),
