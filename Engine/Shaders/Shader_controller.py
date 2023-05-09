@@ -1,7 +1,7 @@
 import os
 
 from OpenGL.GL import GL_VERTEX_SHADER, GL_FRAGMENT_SHADER
-from Engine.Shaders.Shader import Shader
+from Engine.Shaders.OpenGL_Shader import Shader
 
 from Engine.Logger import Logger
 
@@ -80,6 +80,24 @@ class ShaderController:
             Logger().log(f"Compiling shader: {key}", "Shader controller")
             self.shaders[key] = Shader(self.shaders[key])
             self.shaders[key].compile(self.fallback_shader)
+
+    def set_uniform(self, shader_name, uniform_name, value):
+        if shader_name not in self.shaders:
+            Logger().log(f"Couldn't set uniform: couldn't find shader with name {shader_name} from shader list "
+                         f"{self.shaders}", "Shader controller", "Warn")
+            return -1
+
+        shader = self.shaders[shader_name]
+
+        if type(value) == float:
+            shader.set_float(uniform_name, value)
+        elif type(value) == int:
+            shader.set_int(uniform_name, value)
+        elif type(value) == bool:
+            shader.set_bool(uniform_name, value)
+        else:
+            Logger().log(f"Couldn't set uniform: unknown value type; type({value}) == {type(value)}: "
+                         f"{value == type(value)}", "Shader controller", "Warn")
 
 
 if __name__ == '__main__':

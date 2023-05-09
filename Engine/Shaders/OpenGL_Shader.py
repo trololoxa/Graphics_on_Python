@@ -35,8 +35,12 @@ class Shader:
         else:
             Logger().log("Couldn't activate shader program", "Shader", "Error")
 
-    # TODO: figure out where i should use uniform functions
+    @staticmethod
+    def deactivate():
+        glUseProgram(0)
+
     def get_uniform_name(self, name):
+        self.activate()
         location = glGetUniformLocation(self.program, name)
         if location == -1:
             Logger().log(f"Couldn't find uniform location {name}", "Shader", "Warn")
@@ -45,9 +49,12 @@ class Shader:
 
     def set_bool(self, name, boolean):
         glUniform1i(self.get_uniform_name(name), int(boolean))
+        self.deactivate()
 
     def set_int(self, name, integer):
         glUniform1i(self.get_uniform_name(name), integer)
+        self.deactivate()
 
     def set_float(self, name, float_var):
         glUniform1f(self.get_uniform_name(name), float_var)
+        self.deactivate()

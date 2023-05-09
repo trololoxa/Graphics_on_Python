@@ -32,7 +32,8 @@ class Main:
             self.render_base.objects += [obj]
         else:
             obj = Base_object()
-            obj.mesh.apply_points(vertices=vertices, triangles=triangles)
+            obj.mesh.vertices = vertices
+            obj.mesh.triangles = triangles
             obj.mesh.set_primitive_type(primitive=primitive)
             self.render_base.objects += [obj]
 
