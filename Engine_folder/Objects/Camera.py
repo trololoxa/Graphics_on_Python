@@ -1,4 +1,4 @@
-from .Base import Base as Base_object
+from .Base_object import Base as Base_object
 
 
 class Camera(Base_object):

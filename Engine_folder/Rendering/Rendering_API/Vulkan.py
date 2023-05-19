@@ -1,11 +1,11 @@
 # import vulkan
-from Engine.Logger import Logger
+from Engine_folder.Logger import log
 
 
 class Vulkan:
     """Renders any given object using Vulkan"""
     def __init__(self):
-        Logger().log("Using Vulkan Rendering API", "Renderer")
+        log("Using Vulkan Rendering API", "Renderer")
 
     @staticmethod
     def render(shader_mesh_array):

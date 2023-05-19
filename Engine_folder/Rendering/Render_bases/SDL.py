@@ -3,10 +3,10 @@ import ctypes
 import sdl2
 from sdl2 import video
 
-from Engine.Rendering.Rendering_API.OpenGLAPI import OpenGLRender
+from Engine_folder.Rendering.Rendering_API.OpenGLAPI import OpenGLRender
 from OpenGL.GL import glViewport, glClear, glClearColor, GL_COLOR_BUFFER_BIT
 
-from Engine.Logger import Logger
+from Engine_folder.Logger import log
 
 
 class SDLBase:
@@ -17,7 +17,6 @@ class SDLBase:
         """
     def __init__(self):
         self.render_api = OpenGLRender()
-        self.objects = []
         self.window = None
         self.context = None
 
@@ -34,7 +33,7 @@ class SDLBase:
         video.SDL_GL_SetAttribute(video.SDL_GL_CONTEXT_PROFILE_MASK,
                                   video.SDL_GL_CONTEXT_PROFILE_CORE)
 
-        Logger().log("Using GLFW Render Base", "Renderer")
+        log("Using SDL Render Base", "Renderer")
 
     def create_window(self, width=800, height=600, name="OpenGL demo"):
         self.window = sdl2.SDL_CreateWindow(name.encode("UTF-8"),
@@ -69,14 +68,3 @@ class SDLBase:
         sdl2.SDL_DestroyWindow(self.window)
         sdl2.SDL_Quit()
         return 0
-
-    def create_mesh_objects_array(self, shader_controller):
-        return_array = {}
-        for obj in self.objects:
-            program = shader_controller.shaders[shader_controller.directories[obj.shader_id]]
-            if program not in return_array:
-                return_array[program] = [obj.mesh]
-            else:
-                return_array[program] += [obj.mesh]
-
-        return return_array

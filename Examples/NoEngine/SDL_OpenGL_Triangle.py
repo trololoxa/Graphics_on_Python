@@ -28,7 +28,7 @@ def initialize():
     global VAO
     global VBO
 
-    vertexShader = shaders.compileShader("""
+    vertex_shader = shaders.compileShader("""
 #version 460
 
 layout (location=0) in vec4 position;
@@ -43,7 +43,7 @@ void main()
 }
 """, GL.GL_VERTEX_SHADER)
 
-    fragmentShader = shaders.compileShader("""
+    fragment_shader = shaders.compileShader("""
 #version 460
 
 smooth in vec4 theColour;
@@ -55,9 +55,9 @@ void main()
 }
 """, GL.GL_FRAGMENT_SHADER)
 
-    shaderProgram = shaders.compileProgram(vertexShader, fragmentShader)
+    shaderProgram = shaders.compileProgram(vertex_shader, fragment_shader)
 
-    vertexData = numpy.array([
+    vertex_data = numpy.array([
         # Vertex Positions
         0.0, 0.5, 0.0, 1.0,
         0.5, -0.366, 0.0, 1.0,
@@ -76,7 +76,7 @@ void main()
     # Need VBO for triangle vertices and colours
     VBO = GL.glGenBuffers(1)
     GL.glBindBuffer(GL.GL_ARRAY_BUFFER, VBO)
-    GL.glBufferData(GL.GL_ARRAY_BUFFER, vertexData.nbytes, vertexData,
+    GL.glBufferData(GL.GL_ARRAY_BUFFER, vertex_data.nbytes, vertex_data,
                     GL.GL_STATIC_DRAW)
 
     # enable array and set up data

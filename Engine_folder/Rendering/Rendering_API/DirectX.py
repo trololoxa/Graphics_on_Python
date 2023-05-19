@@ -1,11 +1,11 @@
 # import pydx12
-from Engine.Logger import Logger
+from Engine_folder.Logger import log
 
 
 class DirectX:
 
     def __init__(self):
-        Logger().log("Using DirectX Rendering API", "Renderer")
+        log("Using DirectX Rendering API", "Renderer")
 
     @staticmethod
     def render(shader_mesh_array):
