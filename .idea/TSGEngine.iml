@@ -4,6 +4,7 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/Engine" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Engine_tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/TSGEngine" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/../graphic_nigger_trash/.vscode" />
       <excludeFolder url="file://$MODULE_DIR$/../graphic_nigger_trash/Engine_folder" />
       <excludeFolder url="file://$MODULE_DIR$/../graphic_nigger_trash/Package" />

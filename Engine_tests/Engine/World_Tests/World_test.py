@@ -2,7 +2,7 @@ import dataclasses
 import time
 import pytest
 
-from Engine.World import World, BaseSystem
+from TSGEngine.World import World, BaseSystem
 
 
 @pytest.fixture()
