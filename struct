@@ -1,0 +1,163 @@
+TODO: read https://github.com/sdslabs/Rubeus for ideas.
+TODO: check https://github.com/Davidsksilva/simple-render-engine for OpenGL implementations
+TODO: ECS ideas from https://github.com/benmoran56/esper or from https://github.com/ikvk/ecs_pattern
+TODO: find a bunch of project structuring texts ang check other game engines structure (like unreal's structure)
+TODO: data-oriented?
+
+Choices:
+    Render bases:
+        GLFW
+            -only pc platform
+            -only contexts, windows and inputs
+            +callbacks
+            +other api's on your choice
+            +very big community
+        SDL
+            +many platforms
+            +timers, threading, file abstraction, platform and CPU information, and power management
+            - good opengl support, but worse vulkan
+        sfml
+            +more funcs like networking, file management and other
+        -Raylib
+            +easy
+            +everything in single package
+            +multiplatform
+            -only opengl
+        bgfx
+        pygame
+        pyglet
+        cocos2d
+            -opengl wrapper
+        cinder
+
+
+Updates to old version:
+    Mesh component shouldn't have calculations, only data and maybe buffers
+    systems, like scene, texture, mesh or other hold not objects, but their id, or we call id's, or we hold 2 copy-s, that call's by id's, or idn
+    id system fixes parent_child thing
+
+What I want:
+    have ECS
+    Have 3 render libraries (Opengl, vulkan and directx), or don't, cuz vulkan is enough
+    Use Spir-v
+    Custom Assets like textures, shaders and scripts
+    Scenes that can load unload
+    Save settings to file
+    gameobjects list, user and scenes hold gameobjects id's
+
+Ideas:
+    Timer and Loader. What is it?
+    World.
+    entity in just += 1, forget about integer limit, or dont, cuz id-- is rly stupid idea
+    bool "uses texture" to shader
+    is_group for children objects?
+    id_ticks bool, if object should tick
+    mb access by id + name?
+    do setattr, but for error compensation method use get_component()
+    compile shader to spir-v, and save metadata. if metadata changed - recompile
+    components can be done using index++ in component controller system
+    shader uses texture arrays
+    all render related stuff like buffers or other live in separate folder, so it's easier transferring to vulkan
+    time.perf_counter() for precise fps measurement
+    transform component and transform handler is system. component has all funcs, but they just add to the component queue
+    delete weakrefs using try except
+    custom weakref class with __del__ func that deletes entity in world and supers delete
+    exit code list
+    event loop
+    global class structures using class var definition without __init__
+
+Questions:
+    how do we contain id objects? dict with names or each id objects calls by given id?
+    global id container, or separate id containers for entities, components, systems, textures, shaders and other?
+    each id container just does id++, or random(range(0,1.7e308) - [self.id's]) (answer: just ++, i don't think somebody will make 1.79e308 objects in their entire life)
+    for first id implementation should we do id--, cuz it's stupid. (we don't)
+    what to do, if object deletes, creates new object with, luckily, same id, and pointers point to new object. how to fix this? (forget about this id forever)
+    classmethod and normal method with same name at same time?
+
+
+Programming order:
+    Entity
+    Scenes
+    Render
+    Systems
+    Assets
+
+Libraries:
+    Rendering - OpenGL / Vulkan (vulkan if app is slow or if i learned everything)
+    Window - glfw
+    Input - glfw
+    Threading - threading, asyncio, cpp (glfw use single thread cuz glfw is not thread - safe, so don't do multiple global writings, only one writing and a lot of readings)
+    Sound - openal (pyaudio if i what)
+    Networking - socket, asyncio, twisted
+    Texture loading - opencv (we don't have 1b 4k textures, else use pil)
+    Shader - glsl, spir-v (if spir-v is easy, else glsl)
+    Shader translation - glslang
+    model loading - blender
+    math - glm
+    gui - dear imgui,
+
+sort idea - one functionality combined, like draw component and draw system in same folder, or do extensions style like core, render, networking, etc.
+unsorted files/folders/classes:
+-engine
+    -core
+        -math
+        -settings
+        -scene
+        -systems
+    -physics
+        -components
+            -collider
+            -rigidbody
+        -systems
+            -collision
+            -rigidbody
+    -rendering
+        -opengl
+            -mesh_handler
+            -renderer
+            -shader
+            -texture
+        -vulkan
+            -mesh_handler
+            -renderer
+            -shader
+            -texture
+    -window
+        -glfw
+    -logger
+    -object
+        -entity
+            -basic
+        -component
+            -transform
+            -mesh
+        -system
+            -renderer
+            -movement
+    -shaders
+        -standard
+        -shader_handler
+    -input
+        -key_map
+        -input_handler
+    -texture
+        -texture_handler
+    -main
+
+Roadmap:
+    Logger +
+    Entity creation +
+    Adding systems to world and components to objects +
+    Window +
+    Drawing +
+    Saving Entities in Scene +
+    Getting keyboard inputs +
+    adding tags to entity
+    Moving objects by key inputs (do this in assets folder) +
+    applying constant velocity to some object +
+    AABB overlap check +
+
+Versions:
+    first digit: major change, crucial func or very useful thing, that can make engine a lot better (like finalize physics + draw, after that lightning, soft bodies and other)
+    second digit: Big change, fix or other
+    third digit: small bugfix, additional func for easing or WIP thing, currently not fully implemented

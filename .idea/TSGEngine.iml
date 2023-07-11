@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="PYTHON_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/Engine" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Engine_tests" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/../graphic_nigger_trash/.vscode" />
+      <excludeFolder url="file://$MODULE_DIR$/../graphic_nigger_trash/Engine_folder" />
+      <excludeFolder url="file://$MODULE_DIR$/../graphic_nigger_trash/Package" />
+      <excludeFolder url="file://$MODULE_DIR$/../graphic_nigger_trash/install" />
+      <excludeFolder url="file://$MODULE_DIR$/Custom scripts for easifying my life" />
+      <excludeFolder url="file://$MODULE_DIR$/Logs" />
+      <excludeFolder url="file://$MODULE_DIR$/venv" />
+      <excludePattern pattern=".idea" />
+      <excludePattern pattern=".vscode" />
+      <excludePattern pattern="bat_files" />
+      <excludePattern pattern="Build_folder" />
+      <excludePattern pattern="install" />
+    </content>
+    <orderEntry type="jdk" jdkName="graphic_nigger39" jdkType="Python SDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="Custom scripts" />
+  </component>
+</module>
