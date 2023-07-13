@@ -10,6 +10,7 @@ class GLFWWindowHandler:
         self.window = None
         self.callback_funcs = {'key': glfw.set_key_callback, 'framebuffer_size': glfw.set_framebuffer_size_callback}
         self.impl = None
+        self.height, self.width = 0, 0
 
     @staticmethod
     def initialize():
@@ -22,10 +23,14 @@ class GLFWWindowHandler:
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE)
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, True)
 
+        GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, False)
+
         imgui.create_context()
 
     def create_window(self, width=800, height=600, title='Example Title'):
         self.window = glfw.create_window(width, height, title, None, None)
+
+        self.width, self.height = width, height
         if not self.window:
             self.terminate()
 
@@ -39,8 +44,11 @@ class GLFWWindowHandler:
 
         self.callback_funcs[name](self.window, callback)
 
-    def pool_events(self):
+    @staticmethod
+    def pool_events():
         glfw.poll_events()
+
+    def gui_new_frame(self):
         self.impl.process_inputs()
 
         imgui.new_frame()
@@ -57,3 +65,15 @@ class GLFWWindowHandler:
     def terminate(self):
         self.impl.shutdown()
         glfw.terminate()
+
+    def set_framebuffer_size_callback(self, draw_function, viewport_function):
+        viewport_function(0, 0, self.width, self.height)
+
+        def framebuffer_callback(window, width, height):
+            if width > 0 and height > 0:
+                viewport_function(0, 0, width, height)
+                self.width, self.height = width, height
+
+            draw_function()
+
+        self.set_callback('framebuffer_size', framebuffer_callback)

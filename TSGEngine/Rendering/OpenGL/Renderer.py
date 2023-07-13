@@ -6,8 +6,9 @@ from OpenGL import GL
 
 
 class Renderer:
-    def __init__(self):
-        pass
+    @staticmethod
+    def viewport():
+        return GL.glViewport
 
     @staticmethod
     def initialize():

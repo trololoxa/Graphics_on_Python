@@ -3,6 +3,7 @@ import time
 from TSGEngine.World.Entity.Entity import Entity
 from TSGEngine.Core.Scene import SceneManager
 from TSGEngine.Shaders import ShaderHandler
+from TSGEngine.Texture import TextureHandler
 
 # Base systems
 from TSGEngine.World.Systems import RenderSystem
@@ -18,7 +19,7 @@ class World:
         self.scene_manager = SceneManager()
         self.shader_manager = ShaderHandler()
         self.input_manager = None
-        self.texture_handler = None
+        self.texture_handler = TextureHandler()
 
         self._events = {}
 
@@ -34,8 +35,10 @@ class World:
         self.add_system(RenderSystem())
         self.add_system(CollisionSystem())
 
-    def past_window_initialize(self):
+    def past_window_initialize(self, core_fallback_texture_path):
         self.get_system(RenderSystem).renderer.initialize()
+
+        self.texture_handler.initialize(core_fallback_texture_path)
 
     def add_system(self, system):
         system.world = self

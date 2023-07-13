@@ -144,19 +144,6 @@ unsorted files/folders/classes:
         -texture_handler
     -main
 
-Roadmap:
-    Logger +
-    Entity creation +
-    Adding systems to world and components to objects +
-    Window +
-    Drawing +
-    Saving Entities in Scene +
-    Getting keyboard inputs +
-    adding tags to entity
-    Moving objects by key inputs (do this in assets folder) +
-    applying constant velocity to some object +
-    AABB overlap check +
-
 Versions:
     first digit: major change, crucial func or very useful thing, that can make engine a lot better (like finalize physics + draw, after that lightning, soft bodies and other)
     second digit: Big change, fix or other
